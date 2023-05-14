@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @Setter
 public class Product {
@@ -40,7 +40,4 @@ public class Product {
 
     @Lob
     private byte[] photo;
-
-    @Column
-    private boolean isAvailable;
 }

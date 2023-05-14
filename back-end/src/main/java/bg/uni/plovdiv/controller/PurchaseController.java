@@ -1,6 +1,8 @@
 package bg.uni.plovdiv.controller;
 
 import bg.uni.plovdiv.dto.PurchaseDTO;
+import bg.uni.plovdiv.model.BarcodeAndQuantity;
+import bg.uni.plovdiv.model.OrderType;
 import bg.uni.plovdiv.service.PurchaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +29,7 @@ public class PurchaseController {
         return purchaseService.getAllPurchases();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/getById")
     @Operation(summary = "Get a purchase by ID")
     public Optional<PurchaseDTO> getPurchaseById(@NotBlank @RequestParam Long id) {
         return purchaseService.getPurchaseById(id);
@@ -35,7 +37,7 @@ public class PurchaseController {
 
     @PostMapping
     @Operation(summary = "Add a new purchase")
-    public boolean addPurchase(@NotNull @Valid @RequestBody PurchaseDTO purchaseDTO) {
-        return purchaseService.addPurchase(purchaseDTO);
+    public boolean addPurchase(@NotBlank @RequestParam String bulstat, @Valid @RequestBody List<BarcodeAndQuantity> barcodeAndQuantityList, double totalPrice, @NotNull OrderType orderType) {
+        return purchaseService.addPurchase(bulstat, barcodeAndQuantityList, totalPrice, orderType);
     }
 }

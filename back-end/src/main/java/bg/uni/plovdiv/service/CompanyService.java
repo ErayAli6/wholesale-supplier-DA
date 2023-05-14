@@ -30,7 +30,7 @@ public class CompanyService {
                 .toList();
     }
 
-    public Optional<CompanyDTO> getCompanyByBulstat(String bulstat) {
+    public Optional<CompanyDTO> getCompanyDTOByBulstat(String bulstat) {
         Company company = companyRepository.findByBulstat(bulstat);
         if (company == null) {
             return Optional.empty();
@@ -92,5 +92,13 @@ public class CompanyService {
             return false;
         }
         return true;
+    }
+
+    public Optional<Company> getCompanyByBulstat(String bulstat) {
+        Company company = companyRepository.findByBulstat(bulstat);
+        if (company == null) {
+            return Optional.empty();
+        }
+        return Optional.of(company);
     }
 }

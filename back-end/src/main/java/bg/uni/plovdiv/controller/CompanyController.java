@@ -28,10 +28,10 @@ public class CompanyController {
         return companyService.getAllCompanies();
     }
 
-    @GetMapping("/{bulstat}")
+    @GetMapping("/getByBulstat")
     @Operation(summary = "Get a company by bulstat")
     public Optional<CompanyDTO> getCompanyByBulstat(@NotBlank @Length(max = 45) @RequestParam String bulstat) {
-        return companyService.getCompanyByBulstat(bulstat);
+        return companyService.getCompanyDTOByBulstat(bulstat);
     }
 
     @PostMapping
@@ -46,7 +46,7 @@ public class CompanyController {
         return companyService.editCompany(companyDTO);
     }
 
-    @DeleteMapping("/{bulstat}")
+    @DeleteMapping("/remove")
     @Operation(summary = "Remove a company by bulstat")
     public boolean removeCompany(@NotBlank @Length(max = 45) @RequestParam String bulstat) {
         return companyService.removeCompany(bulstat);

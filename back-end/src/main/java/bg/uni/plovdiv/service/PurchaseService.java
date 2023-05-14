@@ -3,14 +3,12 @@ package bg.uni.plovdiv.service;
 import bg.uni.plovdiv.dto.CompanyDTO;
 import bg.uni.plovdiv.dto.ProductDTO;
 import bg.uni.plovdiv.dto.PurchaseDTO;
-import bg.uni.plovdiv.model.Company;
-import bg.uni.plovdiv.model.OrderType;
-import bg.uni.plovdiv.model.Product;
-import bg.uni.plovdiv.model.Purchase;
+import bg.uni.plovdiv.model.*;
 import bg.uni.plovdiv.repository.PurchaseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +17,8 @@ import java.util.Optional;
 public class PurchaseService {
 
     private final PurchaseRepository purchaseRepository;
+
+    private final CompanyService companyService;
 
     private final ProductService productService;
 
@@ -48,66 +48,52 @@ public class PurchaseService {
                         .build());
     }
 
-    public boolean addPurchase(PurchaseDTO purchaseDTO) {
-        Purchase purchase = Purchase.builder()
-                .company(getCompany(purchaseDTO.getCompany()))
-                .orderProducts(getProducts(purchaseDTO.getOrderProducts()))
-                .orderDateTime(purchaseDTO.getOrderDateTime())
-                .totalPrice(purchaseDTO.getTotalPrice())
-                .orderType(purchaseDTO.getOrderType())
-                .build();
+    public boolean addPurchase(String bulstat, List<BarcodeAndQuantity> barcodeAndQuantities, double totalPrice, OrderType orderType) {
+        Company company = companyService.getCompanyByBulstat(bulstat)
+                .orElseThrow(() -> new IllegalArgumentException("Company not found"));
+        List<Product> productList = getProductList(barcodeAndQuantities);
+        Purchase purchase = createPurchase(company, productList, totalPrice, orderType);
         try {
+            updateProductQuantities(productList, orderType);
             purchaseRepository.save(purchase);
-            if (purchaseDTO.getOrderType() == OrderType.DELIVERY) {
-                purchaseDTO.getOrderProducts().forEach(productService::deliveryProduct);
-            } else if (purchaseDTO.getOrderType() == OrderType.SELLING) {
-                purchaseDTO.getOrderProducts().forEach(productService::sellingProduct);
-            } else {
-                throw new IllegalArgumentException("The order does not have order type!");
-            }
         } catch (Exception exception) {
             return false;
         }
         return true;
     }
 
-    private Company getCompany(CompanyDTO companyDTO) {
-        return Company.builder()
-                .bulstat(companyDTO.getBulstat())
-                .name(companyDTO.getName())
-                .address(companyDTO.getAddress())
-                .vatNumber(companyDTO.getVatNumber())
-                .phoneNumber(companyDTO.getPhoneNumber())
-                .email(companyDTO.getEmail())
-                .build();
-    }
-
-    private CompanyDTO getCompanyDTO(Company company) {
-        return CompanyDTO.builder()
-                .bulstat(company.getBulstat())
-                .name(company.getName())
-                .address(company.getAddress())
-                .vatNumber(company.getVatNumber())
-                .phoneNumber(company.getPhoneNumber())
-                .email(company.getEmail())
-                .build();
-    }
-
-    private List<Product> getProducts(List<ProductDTO> productDTOS) {
-        return productDTOS
-                .stream()
-                .map(productDTO -> Product.builder()
-                        .barcode(productDTO.getBarcode())
-                        .brand(productDTO.getBrand())
-                        .model(productDTO.getModel())
-                        .category(productDTO.getCategory())
-                        .quantity(productDTO.getQuantity())
-                        .price(productDTO.getPrice())
-                        .manufactureDate(productDTO.getManufactureDate())
-                        .photo(productDTO.getPhoto())
-                        .isAvailable(productDTO.isAvailable())
-                        .build())
+    private List<Product> getProductList(List<BarcodeAndQuantity> barcodeAndQuantities) {
+        return barcodeAndQuantities.stream()
+                .map(barcodeAndQuantity -> {
+                    Optional<Product> productByBarcode = productService.getProductByBarcode(barcodeAndQuantity.getBarcode());
+                    if (productByBarcode.isEmpty()) {
+                        throw new IllegalArgumentException("Product with barcode :" + barcodeAndQuantity.getBarcode() + " is not found");
+                    }
+                    return productByBarcode.get().toBuilder()
+                            .quantity(barcodeAndQuantity.getQuantity())
+                            .build();
+                })
                 .toList();
+    }
+
+    private Purchase createPurchase(Company company, List<Product> productList, double totalPrice, OrderType orderType) {
+        return Purchase.builder()
+                .company(company)
+                .orderProducts(productList)
+                .orderDateTime(LocalDateTime.now())
+                .totalPrice(totalPrice)
+                .orderType(orderType)
+                .build();
+    }
+
+    private void updateProductQuantities(List<Product> productList, OrderType orderType) {
+        if (orderType == OrderType.DELIVERY) {
+            productList.forEach(productService::deliveryProduct);
+        } else if (orderType == OrderType.SELLING) {
+            productList.forEach(productService::sellingProduct);
+        } else {
+            throw new IllegalArgumentException("The order does not have order type!");
+        }
     }
 
     private List<ProductDTO> getProductDTOs(List<Product> products) {
@@ -122,8 +108,18 @@ public class PurchaseService {
                         .price(product.getPrice())
                         .manufactureDate(product.getManufactureDate())
                         .photo(product.getPhoto())
-                        .isAvailable(product.isAvailable())
                         .build())
                 .toList();
+    }
+
+    private CompanyDTO getCompanyDTO(Company company) {
+        return CompanyDTO.builder()
+                .bulstat(company.getBulstat())
+                .name(company.getName())
+                .address(company.getAddress())
+                .vatNumber(company.getVatNumber())
+                .phoneNumber(company.getPhoneNumber())
+                .email(company.getEmail())
+                .build();
     }
 }

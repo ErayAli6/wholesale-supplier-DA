@@ -31,12 +31,11 @@ public class ProductService {
                         .price(product.getPrice())
                         .manufactureDate(product.getManufactureDate())
                         .photo(product.getPhoto())
-                        .isAvailable(product.isAvailable())
                         .build())
                 .toList();
     }
 
-    public Optional<ProductDTO> getProductByBarcode(@NotBlank @Length(max = 35) String barcode) {
+    public Optional<ProductDTO> getProductDTOByBarcode(@NotBlank @Length(max = 35) String barcode) {
         Product product = productRepository.findByBarcode(barcode);
         if (product == null) {
             return Optional.empty();
@@ -50,7 +49,6 @@ public class ProductService {
                 .price(product.getPrice())
                 .manufactureDate(product.getManufactureDate())
                 .photo(product.getPhoto())
-                .isAvailable(product.isAvailable())
                 .build());
     }
 
@@ -63,7 +61,6 @@ public class ProductService {
                 .quantity(productDTO.getQuantity())
                 .price(productDTO.getPrice())
                 .manufactureDate(productDTO.getManufactureDate())
-                .isAvailable(productDTO.isAvailable())
                 .build();
         try {
             productRepository.save(product);
@@ -84,7 +81,6 @@ public class ProductService {
         product.setQuantity(productDTO.getQuantity());
         product.setPrice(productDTO.getPrice());
         product.setManufactureDate(productDTO.getManufactureDate());
-        product.setAvailable(productDTO.isAvailable());
         try {
             productRepository.save(product);
         } catch (Exception exception) {
@@ -106,31 +102,33 @@ public class ProductService {
         return true;
     }
 
-    protected void deliveryProduct(ProductDTO productDTO) {
-        Product foundProduct = productRepository.findByBarcode(productDTO.getBarcode());
+    protected void deliveryProduct(Product product) {
+        Product foundProduct = productRepository.findByBarcode(product.getBarcode());
         if (foundProduct == null) {
             throw new IllegalArgumentException("The product was not found!");
         }
-        foundProduct.setQuantity(foundProduct.getQuantity() + productDTO.getQuantity());
-        if (foundProduct.getQuantity() > 0) {
-            foundProduct.setAvailable(true);
-        }
+        foundProduct.setQuantity(foundProduct.getQuantity() + product.getQuantity());
         productRepository.save(foundProduct);
     }
 
-    protected void sellingProduct(ProductDTO productDTO) {
-        Product foundProduct = productRepository.findByBarcode(productDTO.getBarcode());
+    protected void sellingProduct(Product product) {
+        Product foundProduct = productRepository.findByBarcode(product.getBarcode());
         if (foundProduct == null) {
             throw new IllegalArgumentException("The product was not found!");
         }
-        int currentQuantity = foundProduct.getQuantity() - productDTO.getQuantity();
+        int currentQuantity = foundProduct.getQuantity() - product.getQuantity();
         if (currentQuantity < 0) {
-            throw new IllegalArgumentException("There is not enough quantity of a product with barcode: " + productDTO.getBarcode());
+            throw new IllegalArgumentException("There is not enough quantity of a product with barcode: " + product.getBarcode());
         }
         foundProduct.setQuantity(currentQuantity);
-        if (foundProduct.getQuantity() == 0) {
-            foundProduct.setAvailable(false);
-        }
         productRepository.save(foundProduct);
+    }
+
+    protected Optional<Product> getProductByBarcode(@NotBlank @Length(max = 35) String barcode) {
+        Product product = productRepository.findByBarcode(barcode);
+        if (product == null) {
+            return Optional.empty();
+        }
+        return Optional.of(product);
     }
 }

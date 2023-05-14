@@ -28,10 +28,10 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
-    @GetMapping("/{barcode}")
+    @GetMapping("/getByBarcode")
     @Operation(summary = "Get a product by barcode")
     public Optional<ProductDTO> getProductByBarcode(@NotBlank @Length(max = 35) @RequestParam String barcode) {
-        return productService.getProductByBarcode(barcode);
+        return productService.getProductDTOByBarcode(barcode);
     }
 
     @PostMapping
@@ -46,7 +46,7 @@ public class ProductController {
         return productService.editProduct(productDTO);
     }
 
-    @DeleteMapping("/{barcode}")
+    @DeleteMapping("/remove")
     @Operation(summary = "Remove a product by barcode")
     public boolean removeProduct(@NotBlank @Length(max = 35) @RequestParam String barcode) {
         return productService.removeProduct(barcode);

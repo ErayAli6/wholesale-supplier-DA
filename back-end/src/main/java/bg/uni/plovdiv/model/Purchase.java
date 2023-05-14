@@ -18,7 +18,7 @@ public class Purchase {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 

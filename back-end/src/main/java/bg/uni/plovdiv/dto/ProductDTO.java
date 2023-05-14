@@ -36,6 +36,4 @@ public class ProductDTO {
     private LocalDate manufactureDate;
 
     private byte[] photo;
-
-    private boolean isAvailable;
 }
