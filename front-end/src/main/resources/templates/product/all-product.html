@@ -1,35 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Wholesale supplier</title>
+    <title>All Products</title>
 </head>
 <body>
 <nav>
     <a href="/">
-        <img src="images/wholasale.jpg" width="350" alt="Wholesale supplier logo">
+        <img src="../images/wholasale.jpg" width="350" alt="Wholesale supplier logo">
     </a>
-    <h1>Wholesale supplier</h1>
+    <h1>All Products</h1>
     <ul>
-        <li><a href="/product"><img src="images/product_icon.png" width="15"> Products</a></li>
-        <li><a href="/company"><img src="images/company.png" width="25">Companies</a></li>
-        <li><a href="/purchase"><img src="images/purchases_logo.jpg" width="15">Purchases</a></li>
+        <li><a href="/product"><img src="../images/product_icon.png" width="15"> Products</a></li>
+        <li><a href="/company"><img src="../images/company.png" width="25">Companies</a></li>
+        <li><a href="/purchase"><img src="../images/purchases_logo.jpg" width="15">Purchases</a></li>
     </ul>
 </nav>
-<main>
-    <h2>Welcome to Wholesale supplier</h2>
-    <p>Wholesale supplier is the leading supplier of high-quality products to businesses across the world. We offer a
-        wide range of products at competitive prices, ensuring that our customers get the best value for their money.
-        Whether you are looking for electronics, fashion, home appliances, or anything else, we have got you
-        covered.</p>
-    <p>At Wholesale supplier, we are committed to providing our customers with the best possible service. If you have
-        any technical issues, please feel free to contact us at:</p>
-    <div class="contact">
-        <h2>Contact Us</h2>
-        <p><strong>Email:</strong> stu2101321032@uni-plovdiv.bg</p>
-        <p><strong>Phone:</strong> +359 88 206 1932</p>
-    </div>
-</main>
+<form th:action="@{/product/get-all}" method="post">
+    <button type="submit">Get All Products</button>
+</form>
+<div th:each="product : ${allProducts}">
+    <p th:text="${product}"></p>
+</div>
 </body>
 </html>
 
@@ -116,4 +108,5 @@
         .contact p {
             font-size: 20px;
         }
+
 </style>

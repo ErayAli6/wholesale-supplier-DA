@@ -19,10 +19,13 @@ public class ProductDTO {
     @Length(max = 35)
     private String barcode;
 
+    @Length(max = 35)
     private String brand;
 
+    @Length(max = 35)
     private String model;
 
+    @Length(max = 35)
     private String category;
 
     @PositiveOrZero
