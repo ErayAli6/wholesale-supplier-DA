@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Register Product</title>
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
 <nav>
@@ -16,6 +17,17 @@
         <li><a href="/purchase"><img src="../images/purchases_logo.jpg" width="15">Purchases</a></li>
     </ul>
 </nav>
+<div>
+    <nav>
+        <ul>
+            <li><a th:href="@{/product/get-all}">All Products</a></li>
+            <li><a th:href="@{/product/get-by-barcode}">Product By Barcode</a></li>
+            <li><a th:href="@{/product/register}">Register product</a></li>
+            <li><a th:href="@{/product/edit}">Edit product</a></li>
+            <li><a th:href="@{/product/remove}">Remove Product</a></li>
+        </ul>
+    </nav>
+</div>
 <form action="#" th:action="@{/product/register}" method="post">
     <div>
         <label for="barcode">Barcode:</label>
@@ -57,88 +69,3 @@
 <p th:text="${registerProduct}"></p>
 </body>
 </html>
-
-<style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-        }
-        header {
-            background-color: #003366;
-            color: white;
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        header img {
-            width: 250px;
-            margin: 10px;
-        }
-        header h1 {
-            margin: 0;
-            font-size: 2.5em;
-        }
-        nav {
-            background-color: #0077be;
-            color: white;
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        nav ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: space-between;
-            width: 60%;
-        }
-        nav li {
-            margin: 0 10px;
-        }
-        nav a {
-            color: white;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            font-size: 1.2em;
-            transition: all 0.3s ease;
-        }
-        nav a:hover {
-            transform: scale(1.1);
-        }
-        nav img {
-            margin-right: 5px;
-        }
-         main {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-        p {
-            font-size: 20px;
-            margin-bottom: 20px;
-        }
-        h2 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        strong {
-            font-weight: bold;
-        }
-        .contact {
-            margin-top: 50px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .contact h2 {
-            margin-bottom: 20px;
-        }
-        .contact p {
-            font-size: 20px;
-        }
-</style>

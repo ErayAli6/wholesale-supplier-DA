@@ -7,6 +7,8 @@ import bg.uni.plovdiv.service.PurchaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +39,8 @@ public class PurchaseController {
 
     @PostMapping
     @Operation(summary = "Add a new purchase")
-    public boolean addPurchase(@NotBlank @RequestParam String bulstat, @Valid @RequestBody List<BarcodeAndQuantity> barcodeAndQuantityList, double totalPrice, @NotNull OrderType orderType) {
+    public boolean addPurchase(@NotBlank @RequestBody String bulstat, @Valid @RequestBody List<BarcodeAndQuantity> barcodeAndQuantityList, @RequestBody @DecimalMin(value = "0.00")
+    @DecimalMax(value = "9999999999.99") double totalPrice, @RequestBody @NotNull OrderType orderType) {
         return purchaseService.addPurchase(bulstat, barcodeAndQuantityList, totalPrice, orderType);
     }
 }

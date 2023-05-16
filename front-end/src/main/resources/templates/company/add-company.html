@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Company</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav>
+    <a href="/">
+        <img src="../images/wholasale.jpg" width="350" alt="Wholesale supplier logo">
+    </a>
+    <h1>Products</h1>
+    <ul>
+        <li><a href="/product"><img src="../images/product_icon.png" width="15"> Products</a></li>
+        <li><a href="/company"><img src="../images/company.png" width="25">Companies</a></li>
+        <li><a href="/purchase"><img src="../images/purchases_logo.jpg" width="15">Purchases</a></li>
+    </ul>
+</nav>
+<div>
+    <nav>
+        <ul>
+            <li><a th:href="@{/company/get-all}">All Companies</a></li>
+            <li><a th:href="@{/company/get-by-bulstat}">Company By Bulstat</a></li>
+            <li><a th:href="@{/company/add}">Add company</a></li>
+            <li><a th:href="@{/company/edit}">Edit company</a></li>
+            <li><a th:href="@{/company/remove}">Remove company</a></li>
+        </ul>
+    </nav>
+</div>
+<form action="#" th:action="@{/company/add}" method="post">
+    <div>
+        <label for="bulstat">Bulstat:</label>
+        <input type="text" id="bulstat" name="bulstat" th:required="true" th:maxlength="35"/>
+    </div>
+    <div>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" th:maxlength="35"/>
+    </div>
+    <div>
+        <label for="modelProduct">Model:</label>
+        <input type="text" id="modelProduct" name="modelProduct" th:maxlength="35"/>
+    </div>
+    <div>
+        <label for="category">Category:</label>
+        <input type="text" id="category" name="category" th:maxlength="35"/>
+    </div>
+    <div>
+        <input type="submit" value="Add"/>
+    </div>
+</form>
+</body>
+</html>

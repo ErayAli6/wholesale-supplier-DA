@@ -2,7 +2,6 @@ package bg.uni.plovdiv.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -15,41 +14,42 @@ import java.time.LocalDate;
 import java.util.Base64;
 
 @Service
-@RequiredArgsConstructor
 public class ProductService {
 
-    @Value("${wholesale.backend.supplier.api}")
-    private String backEndApi;
+    private final String backEndUrl;
 
     private final RestTemplate restTemplate;
 
     private final ObjectMapper objectMapper;
 
+    public ProductService(@Value("${wholesale.backend.supplier.url}") String backEndUrl, RestTemplate restTemplate, ObjectMapper objectMapper) {
+        this.backEndUrl = backEndUrl + "/product";
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
+    }
+
     public String getAllProducts() {
-        String url = backEndApi + "/product";
-        return restTemplate.exchange(url, HttpMethod.GET, createRequest(), String.class).getBody();
+        return restTemplate.exchange(backEndUrl, HttpMethod.GET, createRequest(), String.class).getBody();
     }
 
     public String getProductByBarcode(String barcode) {
-        String url = backEndApi + "/product/getByBarcode?barcode=" + barcode;
+        String url = backEndUrl + "/getByBarcode?barcode=" + barcode;
         return restTemplate.exchange(url, HttpMethod.GET, createRequest(), String.class).getBody();
     }
 
     public String removeProduct(String barcode) {
-        String url = backEndApi + "product/remove?barcode=" + barcode;
+        String url = backEndUrl + "/remove?barcode=" + barcode;
         return restTemplate.exchange(url, HttpMethod.DELETE, createRequest(), String.class).getBody();
     }
 
     public String registerProduct(String barcode, String brand, String model, String category, int quantity, double price, LocalDate manufactureDate, byte[] photo) {
         ObjectNode jsonBody = getJsonNode(barcode, brand, model, category, quantity, price, manufactureDate, photo);
-        String url = backEndApi + "/product";
-        return restTemplate.exchange(url, HttpMethod.POST, createRequest(jsonBody.toString()), String.class).getBody();
+        return restTemplate.exchange(backEndUrl, HttpMethod.POST, createRequest(jsonBody.toString()), String.class).getBody();
     }
 
     public String editProduct(String barcode, String brand, String model, String category, int quantity, double price, LocalDate manufactureDate, byte[] photo) {
         ObjectNode jsonBody = getJsonNode(barcode, brand, model, category, quantity, price, manufactureDate, photo);
-        String url = backEndApi + "/product";
-        return restTemplate.exchange(url, HttpMethod.PUT, createRequest(jsonBody.toString()), String.class).getBody();
+        return restTemplate.exchange(backEndUrl, HttpMethod.PUT, createRequest(jsonBody.toString()), String.class).getBody();
     }
 
     private ObjectNode getJsonNode(String barcode, String brand, String model, String category, int quantity, double price, LocalDate manufactureDate, byte[] photo) {
@@ -60,7 +60,9 @@ public class ProductService {
         jsonNode.put("category", category);
         jsonNode.put("quantity", quantity);
         jsonNode.put("price", price);
-        jsonNode.put("manufactureDate", manufactureDate.toString());
+        if (manufactureDate != null) {
+            jsonNode.put("manufactureDate", manufactureDate.toString());
+        }
         if (photo != null) {
             jsonNode.put("photo", Base64.getEncoder().encodeToString(photo));
         }

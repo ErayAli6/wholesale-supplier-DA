@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Product By Barcode</title>
+    <title>Company by Bulstat</title>
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
@@ -10,7 +10,7 @@
     <a href="/">
         <img src="../images/wholasale.jpg" width="350" alt="Wholesale supplier logo">
     </a>
-    <h1>Product By Barcode</h1>
+    <h1>Products</h1>
     <ul>
         <li><a href="/product"><img src="../images/product_icon.png" width="15"> Products</a></li>
         <li><a href="/company"><img src="../images/company.png" width="25">Companies</a></li>
@@ -20,19 +20,19 @@
 <div>
     <nav>
         <ul>
-            <li><a th:href="@{/product/get-all}">All Products</a></li>
-            <li><a th:href="@{/product/get-by-barcode}">Product By Barcode</a></li>
-            <li><a th:href="@{/product/register}">Register product</a></li>
-            <li><a th:href="@{/product/edit}">Edit product</a></li>
-            <li><a th:href="@{/product/remove}">Remove Product</a></li>
+            <li><a th:href="@{/company/get-all}">All Companies</a></li>
+            <li><a th:href="@{/company/get-by-bulstat}">Company By Bulstat</a></li>
+            <li><a th:href="@{/company/add}">Add company</a></li>
+            <li><a th:href="@{/company/edit}">Edit company</a></li>
+            <li><a th:href="@{/company/remove}">Remove company</a></li>
         </ul>
     </nav>
 </div>
-<form method="post" th:action="@{/product/get-by-barcode}">
-    <label for="barcode">Barcode:</label>
-    <input type="text" id="barcode" name="barcode" required maxlength="35">
+<form method="post" th:action="@{/company/get-by-bulstat}">
+    <label for="bulstat">Bulstat:</label>
+    <input type="text" id="bulstat" name="bulstat" required maxlength="35">
     <button type="submit">Search</button>
 </form>
-<div th:text="${productByBarcode}"></div>
+<div th:text="${companyByBulstat}"></div>
 </body>
 </html>

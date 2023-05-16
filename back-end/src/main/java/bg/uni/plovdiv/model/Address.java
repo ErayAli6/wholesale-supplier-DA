@@ -36,11 +36,11 @@ public class Address {
 
     @Column(nullable = false, length = 10)
     @NotBlank
-    @Length(max = 30)
+    @Length(max = 10)
     private String number;
 
     @Column(nullable = false, length = 10)
     @NotBlank
-    @Length(max = 30)
+    @Length(max = 10)
     private String zipCode;
 }
