@@ -33,33 +33,32 @@ public class PurchaseService {
     }
 
     public String getPurchasesById(Long id) {
-        String url = backEndUrl + "/getById?id" + id;
+        String url = backEndUrl + "/getById?id=" + id;
         return restTemplate.exchange(url, HttpMethod.GET, createRequest(), String.class).getBody();
     }
 
-    public String addPurchase(String bulstat, double totalPrice, List<String> barcode, List<Integer> quantity, String orderType) {
-        ObjectNode jsonBody = getJsonNode(bulstat, totalPrice, barcode, quantity, orderType);
-        return restTemplate.exchange(backEndUrl, HttpMethod.POST, createRequest(jsonBody.toString()), String.class).getBody();
+    public String addPurchase(String bulstat, double totalPrice, List<String> barcodes, List<Integer> quantities, String orderType) {
+        String url = backEndUrl + "?bulstat=" + bulstat + "&totalPrice=" + totalPrice + "&orderType=" + orderType;
+        ArrayNode jsonBody = getJsonNode(barcodes, quantities);
+        String responseBody = restTemplate.exchange(url, HttpMethod.POST, createRequest(jsonBody.toString()), String.class).getBody();
+        if (responseBody != null && responseBody.equals("true")) {
+            return "Purchase added successfully.";
+        } else {
+            return "Failed to add purchase.";
+        }
     }
 
-    private ObjectNode getJsonNode(String bulstat, double totalPrice, List<String> barcode, List<Integer> quantity, String orderType) {
-        ObjectNode jsonNode = objectMapper.createObjectNode();
-        jsonNode.put("bulstat", bulstat);
+    private ArrayNode getJsonNode(List<String> barcodes, List<Integer> quantities) {
+        ArrayNode jsonArray = objectMapper.createArrayNode();
 
-        ArrayNode barcodeAndQuantityList = objectMapper.createArrayNode();
-        for (int i = 0; i < barcode.size(); i++) {
+        for (int i = 0; i < barcodes.size(); i++) {
             ObjectNode barcodeAndQuantity = objectMapper.createObjectNode();
-            barcodeAndQuantity.put("barcode", barcode.get(i));
-            barcodeAndQuantity.put("quantity", quantity.get(i));
-            barcodeAndQuantityList.add(barcodeAndQuantity);
+            barcodeAndQuantity.put("barcode", barcodes.get(i));
+            barcodeAndQuantity.put("quantity", quantities.get(i));
+            jsonArray.add(barcodeAndQuantity);
         }
 
-        jsonNode.set("barcodeAndQuantityList", barcodeAndQuantityList);
-
-        jsonNode.put("totalPrice", totalPrice);
-        jsonNode.put("orderType", orderType);
-
-        return jsonNode;
+        return jsonArray;
     }
 
     private HttpEntity<String> createRequest() {

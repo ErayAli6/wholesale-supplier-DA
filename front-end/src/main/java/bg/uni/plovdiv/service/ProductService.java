@@ -39,17 +39,32 @@ public class ProductService {
 
     public String removeProduct(String barcode) {
         String url = backEndUrl + "/remove?barcode=" + barcode;
-        return restTemplate.exchange(url, HttpMethod.DELETE, createRequest(), String.class).getBody();
+        String responseBody = restTemplate.exchange(url, HttpMethod.DELETE, createRequest(), String.class).getBody();
+        if (responseBody != null && responseBody.equals("true")) {
+            return "Product removed successfully.";
+        } else {
+            return "Failed to remove product.";
+        }
     }
 
     public String registerProduct(String barcode, String brand, String model, String category, int quantity, double price, LocalDate manufactureDate, byte[] photo) {
         ObjectNode jsonBody = getJsonNode(barcode, brand, model, category, quantity, price, manufactureDate, photo);
-        return restTemplate.exchange(backEndUrl, HttpMethod.POST, createRequest(jsonBody.toString()), String.class).getBody();
+        String responseBody = restTemplate.exchange(backEndUrl, HttpMethod.POST, createRequest(jsonBody.toString()), String.class).getBody();
+        if (responseBody != null && responseBody.equals("true")) {
+            return "Product registered successfully.";
+        } else {
+            return "Failed to register product.";
+        }
     }
 
     public String editProduct(String barcode, String brand, String model, String category, int quantity, double price, LocalDate manufactureDate, byte[] photo) {
         ObjectNode jsonBody = getJsonNode(barcode, brand, model, category, quantity, price, manufactureDate, photo);
-        return restTemplate.exchange(backEndUrl, HttpMethod.PUT, createRequest(jsonBody.toString()), String.class).getBody();
+        String responseBody = restTemplate.exchange(backEndUrl, HttpMethod.PUT, createRequest(jsonBody.toString()), String.class).getBody();
+        if (responseBody != null && responseBody.equals("true")) {
+            return "Product edited successfully.";
+        } else {
+            return "Failed to edit product.";
+        }
     }
 
     private ObjectNode getJsonNode(String barcode, String brand, String model, String category, int quantity, double price, LocalDate manufactureDate, byte[] photo) {

@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/purchase")
+@RequestMapping(value = "/api/purchase", produces = APPLICATION_JSON_VALUE)
 @Tag(name = "Purchase endpoints")
 public class PurchaseController {
 
@@ -39,8 +41,8 @@ public class PurchaseController {
 
     @PostMapping
     @Operation(summary = "Add a new purchase")
-    public boolean addPurchase(@NotBlank @RequestBody String bulstat, @Valid @RequestBody List<BarcodeAndQuantity> barcodeAndQuantityList, @RequestBody @DecimalMin(value = "0.00")
-    @DecimalMax(value = "9999999999.99") double totalPrice, @RequestBody @NotNull OrderType orderType) {
+    public boolean addPurchase(@NotBlank @RequestParam String bulstat, @Valid @RequestBody List<BarcodeAndQuantity> barcodeAndQuantityList, @RequestParam @DecimalMin(value = "0.00")
+    @DecimalMax(value = "9999999999.99") double totalPrice, @RequestParam @NotNull  OrderType orderType) {
         return purchaseService.addPurchase(bulstat, barcodeAndQuantityList, totalPrice, orderType);
     }
 }

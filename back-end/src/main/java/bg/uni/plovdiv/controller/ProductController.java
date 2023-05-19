@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/product")
+@RequestMapping(value = "/api/product", produces = APPLICATION_JSON_VALUE)
 @Tag(name = "Product endpoints")
 public class ProductController {
 

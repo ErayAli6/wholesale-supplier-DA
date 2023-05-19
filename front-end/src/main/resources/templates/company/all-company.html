@@ -31,8 +31,151 @@
 <form th:action="@{/company/get-all}" method="post">
     <button type="submit">Get All Companies</button>
 </form>
-<div th:each="company : ${allCompanies}">
-    <p th:text="${company}"></p>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>Bulstat</th>
+            <th>Name</th>
+            <th>Country</th>
+            <th>State</th>
+            <th>City</th>
+            <th>Street</th>
+            <th>Number</th>
+            <th>ZIP Code</th>
+            <th>VAT Number</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody id="companyTableBody">
+        <!-- Table rows will be dynamically generated here -->
+        </tbody>
+    </table>
 </div>
+<div class="pagination" style="margin-top: 20px; text-align: center;">
+    <button id="prevPageBtn" style="margin-right: 10px;">Previous</button>
+    <div id="paginationContainer" style="display: inline-block;"></div>
+    <button id="nextPageBtn" style="margin-left: 10px;">Next</button>
+</div>
+<script th:inline="javascript">
+    // Parse the JSON string into a JavaScript object
+    var allCompanies = /*[[${allCompanies}]]*/ '[]';
+    var companyData = JSON.parse(allCompanies);
+    var currentPage = 1;
+    var productsPerPage = 10;
+
+    // Function to generate table rows and columns dynamically
+    function generateTableRows(data) {
+        var tableBody = document.getElementById('companyTableBody');
+        tableBody.innerHTML = '';
+
+        var startIndex = (currentPage - 1) * productsPerPage;
+        var endIndex = Math.min(startIndex + productsPerPage, data.length);
+
+        for (var i = startIndex; i < endIndex; i++) {
+            var product = data[i];
+            var row = document.createElement('tr');
+
+            var bulstatCell = document.createElement('td');
+            bulstatCell.textContent = product.bulstat;
+            row.appendChild(bulstatCell);
+
+            var nameCell = document.createElement('td');
+            nameCell.textContent = product.name;
+            row.appendChild(nameCell);
+
+            var countryCell = document.createElement('td');
+            countryCell.textContent = product.address.country;
+            row.appendChild(countryCell);
+
+            var stateCell = document.createElement('td');
+            stateCell.textContent = product.address.state;
+            row.appendChild(stateCell);
+
+            var cityCell = document.createElement('td');
+            cityCell.textContent = product.address.city;
+            row.appendChild(cityCell);
+
+            var streetCell = document.createElement('td');
+            streetCell.textContent = product.address.street;
+            row.appendChild(streetCell);
+
+            var numberCell = document.createElement('td');
+            numberCell.textContent = product.address.number;
+            row.appendChild(numberCell);
+
+            var zipCodeCell = document.createElement('td');
+            zipCodeCell.textContent = product.address.zipCode;
+            row.appendChild(zipCodeCell);
+
+            var vatNumberCell = document.createElement('td');
+            vatNumberCell.textContent = product.vatNumber;
+            row.appendChild(vatNumberCell);
+
+            var phoneNumberCell = document.createElement('td');
+            phoneNumberCell.textContent = product.phoneNumber;
+            row.appendChild(phoneNumberCell);
+
+            var emailCell = document.createElement('td');
+            emailCell.textContent = product.email;
+            row.appendChild(emailCell);
+
+            tableBody.appendChild(row);
+        }
+    }
+
+    // Function to generate pagination links
+    function generatePagination(data) {
+    var paginationContainer = document.getElementById('paginationContainer');
+        paginationContainer.innerHTML = '';
+
+        var totalPages = Math.ceil(data.length / productsPerPage);
+
+        for (var i = 1; i <= totalPages; i++) {
+            var link = document.createElement('a');
+            link.href = '#';
+            link.textContent = i;
+            link.classList.add('page-link');
+
+            if (i === currentPage) {
+                link.classList.add('active');
+            }
+
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                currentPage = parseInt(this.textContent);
+                generateTableRows(companyData);
+                generatePagination(companyData);
+            });
+
+            paginationContainer.appendChild(link);
+        }
+    }
+
+    // Generate the table rows and pagination links on page load
+    generateTableRows(companyData);
+    generatePagination(companyData);
+
+     var prevPageBtn = document.getElementById('prevPageBtn');
+    var nextPageBtn = document.getElementById('nextPageBtn');
+
+    prevPageBtn.addEventListener('click', function() {
+        if (currentPage > 1) {
+            currentPage--;
+            generateTableRows(companyData);
+            generatePagination(companyData);
+        }
+    });
+
+    nextPageBtn.addEventListener('click', function() {
+        var totalPages = Math.ceil(companyData.length / productsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            generateTableRows(companyData);
+            generatePagination(companyData);
+        }
+    });
+</script>
 </body>
 </html>

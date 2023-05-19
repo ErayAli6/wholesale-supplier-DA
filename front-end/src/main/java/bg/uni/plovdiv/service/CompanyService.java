@@ -36,17 +36,32 @@ public class CompanyService {
 
     public String removeCompany(String bulstat) {
         String url = backEndUrl + "/remove?bulstat=" + bulstat;
-        return restTemplate.exchange(url, HttpMethod.DELETE, createRequest(), String.class).getBody();
+        String responseBody = restTemplate.exchange(url, HttpMethod.DELETE, createRequest(), String.class).getBody();
+        if (responseBody != null && responseBody.equals("true")) {
+            return "Company removed successfully.";
+        } else {
+            return "Failed to remove company.";
+        }
     }
 
     public String addCompany(String bulstat, String name, String country, String state, String city, String street, String number, String zipCode, String vatNumber, String phoneNumber, String email) {
         ObjectNode jsonBody = getJsonNode(bulstat, name, country, state, city, street, number, zipCode, vatNumber, phoneNumber, email);
-        return restTemplate.exchange(backEndUrl, HttpMethod.POST, createRequest(jsonBody.toString()), String.class).getBody();
+        String responseBody = restTemplate.exchange(backEndUrl, HttpMethod.POST, createRequest(jsonBody.toString()), String.class).getBody();
+        if (responseBody != null && responseBody.equals("true")) {
+            return "Company added successfully.";
+        } else {
+            return "Failed to add company.";
+        }
     }
 
     public String editCompany(String bulstat, String name, String country, String state, String city, String street, String number, String zipCode, String vatNumber, String phoneNumber, String email) {
         ObjectNode jsonBody = getJsonNode(bulstat, name, country, state, city, street, number, zipCode, vatNumber, phoneNumber, email);
-        return restTemplate.exchange(backEndUrl, HttpMethod.PUT, createRequest(jsonBody.toString()), String.class).getBody();
+        String responseBody = restTemplate.exchange(backEndUrl, HttpMethod.PUT, createRequest(jsonBody.toString()), String.class).getBody();
+        if (responseBody != null && responseBody.equals("true")) {
+            return "Company edited successfully.";
+        } else {
+            return "Failed to edit company.";
+        }
     }
 
     private ObjectNode getJsonNode(String bulstat, String name, String country, String state, String city, String street, String number, String zipCode, String vatNumber, String phoneNumber, String email) {

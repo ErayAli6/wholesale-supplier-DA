@@ -28,5 +28,53 @@
         </ul>
     </nav>
 </div>
+<form action="#" th:action="@{/company/edit}" method="post">
+    <div>
+        <label for="bulstat">Bulstat:</label>
+        <input type="text" id="bulstat" name="bulstat" th:required="true" th:maxlength="35" required/>
+    </div>
+    <div>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" th:maxlength="35"/>
+    </div>
+    <div>
+        <label for="country">Country:</label>
+        <input type="text" id="country" name="country" th:maxlength="30" required/>
+    </div>
+    <div>
+        <label for="state">State:</label>
+        <input type="text" id="state" name="state" th:maxlength="30" required/>
+    </div>
+    <div>
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" th:maxlength="30" required/>
+    </div>
+    <div>
+        <label for="street">Street:</label>
+        <input type="text" id="street" name="street" th:maxlength="30" required/>
+    </div>
+    <div>
+        <label for="number">Number:</label>
+        <input type="text" id="number" name="number" th:maxlength="30" required/>
+    </div>
+    <div>
+        <label for="zipCode">ZIP Code:</label>
+        <input type="text" id="zipCode" name="zipCode" th:maxlength="30" required/>
+    </div>
+    <div>
+        <label for="vatNumber">VAT Number:</label>
+        <input type="text" id="vatNumber" name="vatNumber" th:maxlength="20" required/>
+    </div>
+    <div>
+        <label for="phoneNumber">Phone Number:</label>
+        <input type="text" id="phoneNumber" name="phoneNumber" th:maxlength="15"/>
+    </div>
+    <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" th:maxlength="35"/>
+    </div>
+    <button type="submit">Edit</button>
+</form>
+<p th:text="${editCompany}"></p>
 </body>
 </html>
