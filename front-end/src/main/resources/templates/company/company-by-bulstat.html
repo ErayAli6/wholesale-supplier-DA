@@ -88,7 +88,20 @@
                 var valueCell = document.createElement('td');
 
                 keyCell.textContent = key;
-                valueCell.textContent = data[key];
+
+                // Check if the value is an object (address)
+                if (typeof data[key] === 'object' && data[key] !== null) {
+                    // Access the address properties and display them individually
+                    var address = data[key];
+                    valueCell.textContent = address.country + ', ' +
+                        address.state + ', ' +
+                        address.city + ', ' +
+                        address.street + ', ' +
+                        address.number + ', ' +
+                        address.zipCode;
+                } else {
+                    valueCell.textContent = data[key];
+                }
 
                 row.appendChild(keyCell);
                 row.appendChild(valueCell);
@@ -97,6 +110,7 @@
             }
         }
     }
+
     // Generate the table rows on page load
     generateTableRows(companyData);
 </script>

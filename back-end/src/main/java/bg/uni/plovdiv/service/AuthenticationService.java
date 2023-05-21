@@ -1,12 +1,8 @@
 package bg.uni.plovdiv.service;
 
-import bg.uni.plovdiv.model.security.AuthenticationRequest;
-import bg.uni.plovdiv.model.security.AuthenticationResponse;
-import bg.uni.plovdiv.model.security.RegisterRequest;
-import bg.uni.plovdiv.model.security.User;
+import bg.uni.plovdiv.model.security.*;
 import bg.uni.plovdiv.repository.UserRepository;
 import bg.uni.plovdiv.security.JwtService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class AuthenticationService {
 
     private final UserRepository userRepository;
@@ -26,6 +21,17 @@ public class AuthenticationService {
     private final JwtService jwtService;
 
     private final AuthenticationManager authenticationManager;
+
+    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
+        if (userRepository.findByUsername("admin").isEmpty()) {
+            userRepository.save(createAdmin());
+        }
+    }
+
 
     public AuthenticationResponse register(RegisterRequest request) {
         User user = User.builder()
@@ -59,5 +65,15 @@ public class AuthenticationService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public User createAdmin() {
+        return User.builder()
+                .username("admin")
+                .password(passwordEncoder.encode("admin"))
+                .firstName("admin")
+                .lastName("admin")
+                .userRole(UserRole.ADMIN)
+                .build();
     }
 }
