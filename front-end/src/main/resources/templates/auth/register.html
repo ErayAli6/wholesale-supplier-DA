@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Register User</title>
+    <link rel="stylesheet" href="../authStyles.css">
+</head>
+<body>
+<main>
+    <h2>Register User</h2>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/auth/admin-panel">Panel</a></li>
+            <li><a href="/auth/register">Register</a></li>
+            <li><a href="/auth/remove">Remove</a></li>
+            <li><a href="/auth/getUsers">Get Users</a></li>
+            <li><a href="/auth/logout">Logout</a></li>
+        </ul>
+    </nav>
+    <form action="#" th:action="@{/auth/register}" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" required><br><br>
+
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" required><br><br>
+
+        <label for="userRole">User Role:</label>
+        <select id="userRole" name="userRole">
+            <option value="ADMIN">ADMIN</option>
+            <option value="WORKER">WORKER</option>
+        </select><br><br>
+
+        <input type="submit" value="Register">
+    </form>
+    <div class="response" th:if="${response}">
+        <p th:text="${response}"></p>
+    </div>
+</main>
+</body>
+</html>

@@ -25,18 +25,18 @@ public class CompanyService {
         this.objectMapper = objectMapper;
     }
 
-    public String getCompanies() {
-        return restTemplate.exchange("http://localhost:8080/api/company", HttpMethod.GET, createRequest(), String.class).getBody();
+    public String getCompanies(String token) {
+        return restTemplate.exchange("http://localhost:8080/api/company", HttpMethod.GET, createRequest(token), String.class).getBody();
     }
 
-    public String getCompanyByBulstat(String bulstat) {
+    public String getCompanyByBulstat(String bulstat, String token) {
         String url = backEndUrl + "/getByBulstat?bulstat=" + bulstat;
-        return restTemplate.exchange(url, HttpMethod.GET, createRequest(), String.class).getBody();
+        return restTemplate.exchange(url, HttpMethod.GET, createRequest(token), String.class).getBody();
     }
 
-    public String removeCompany(String bulstat) {
+    public String removeCompany(String bulstat, String token) {
         String url = backEndUrl + "/remove?bulstat=" + bulstat;
-        String responseBody = restTemplate.exchange(url, HttpMethod.DELETE, createRequest(), String.class).getBody();
+        String responseBody = restTemplate.exchange(url, HttpMethod.DELETE, createRequest(token), String.class).getBody();
         if (responseBody != null && responseBody.equals("true")) {
             return "Company removed successfully.";
         } else {
@@ -44,9 +44,9 @@ public class CompanyService {
         }
     }
 
-    public String addCompany(String bulstat, String name, String country, String state, String city, String street, String number, String zipCode, String vatNumber, String phoneNumber, String email) {
+    public String addCompany(String bulstat, String name, String country, String state, String city, String street, String number, String zipCode, String vatNumber, String phoneNumber, String email, String token) {
         ObjectNode jsonBody = getJsonNode(bulstat, name, country, state, city, street, number, zipCode, vatNumber, phoneNumber, email);
-        String responseBody = restTemplate.exchange(backEndUrl, HttpMethod.POST, createRequest(jsonBody.toString()), String.class).getBody();
+        String responseBody = restTemplate.exchange(backEndUrl, HttpMethod.POST, createRequest(jsonBody.toString(), token), String.class).getBody();
         if (responseBody != null && responseBody.equals("true")) {
             return "Company added successfully.";
         } else {
@@ -54,9 +54,9 @@ public class CompanyService {
         }
     }
 
-    public String editCompany(String bulstat, String name, String country, String state, String city, String street, String number, String zipCode, String vatNumber, String phoneNumber, String email) {
+    public String editCompany(String bulstat, String name, String country, String state, String city, String street, String number, String zipCode, String vatNumber, String phoneNumber, String email, String token) {
         ObjectNode jsonBody = getJsonNode(bulstat, name, country, state, city, street, number, zipCode, vatNumber, phoneNumber, email);
-        String responseBody = restTemplate.exchange(backEndUrl, HttpMethod.PUT, createRequest(jsonBody.toString()), String.class).getBody();
+        String responseBody = restTemplate.exchange(backEndUrl, HttpMethod.PUT, createRequest(jsonBody.toString(), token), String.class).getBody();
         if (responseBody != null && responseBody.equals("true")) {
             return "Company edited successfully.";
         } else {
@@ -84,15 +84,17 @@ public class CompanyService {
         return jsonNode;
     }
 
-    private HttpEntity<String> createRequest() {
+    private HttpEntity<String> createRequest(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(token);
         return new HttpEntity<>(headers);
     }
 
-    private HttpEntity<String> createRequest(String json) {
+    private HttpEntity<String> createRequest(String json, String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(token);
         return new HttpEntity<>(json, headers);
     }
 }

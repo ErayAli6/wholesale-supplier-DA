@@ -28,18 +28,18 @@ public class ProductService {
         this.objectMapper = objectMapper;
     }
 
-    public String getAllProducts() {
-        return restTemplate.exchange(backEndUrl, HttpMethod.GET, createRequest(), String.class).getBody();
+    public String getAllProducts(String token) {
+        return restTemplate.exchange(backEndUrl, HttpMethod.GET, createRequest(token), String.class).getBody();
     }
 
-    public String getProductByBarcode(String barcode) {
+    public String getProductByBarcode(String barcode, String token) {
         String url = backEndUrl + "/getByBarcode?barcode=" + barcode;
-        return restTemplate.exchange(url, HttpMethod.GET, createRequest(), String.class).getBody();
+        return restTemplate.exchange(url, HttpMethod.GET, createRequest(token), String.class).getBody();
     }
 
-    public String removeProduct(String barcode) {
+    public String removeProduct(String barcode, String token) {
         String url = backEndUrl + "/remove?barcode=" + barcode;
-        String responseBody = restTemplate.exchange(url, HttpMethod.DELETE, createRequest(), String.class).getBody();
+        String responseBody = restTemplate.exchange(url, HttpMethod.DELETE, createRequest(token), String.class).getBody();
         if (responseBody != null && responseBody.equals("true")) {
             return "Product removed successfully.";
         } else {
@@ -47,9 +47,9 @@ public class ProductService {
         }
     }
 
-    public String registerProduct(String barcode, String brand, String model, String category, int quantity, double price, LocalDate manufactureDate, byte[] photo) {
+    public String registerProduct(String barcode, String brand, String model, String category, int quantity, double price, LocalDate manufactureDate, byte[] photo, String token) {
         ObjectNode jsonBody = getJsonNode(barcode, brand, model, category, quantity, price, manufactureDate, photo);
-        String responseBody = restTemplate.exchange(backEndUrl, HttpMethod.POST, createRequest(jsonBody.toString()), String.class).getBody();
+        String responseBody = restTemplate.exchange(backEndUrl, HttpMethod.POST, createRequest(jsonBody.toString(), token), String.class).getBody();
         if (responseBody != null && responseBody.equals("true")) {
             return "Product registered successfully.";
         } else {
@@ -57,9 +57,9 @@ public class ProductService {
         }
     }
 
-    public String editProduct(String barcode, String brand, String model, String category, int quantity, double price, LocalDate manufactureDate, byte[] photo) {
+    public String editProduct(String barcode, String brand, String model, String category, int quantity, double price, LocalDate manufactureDate, byte[] photo, String token) {
         ObjectNode jsonBody = getJsonNode(barcode, brand, model, category, quantity, price, manufactureDate, photo);
-        String responseBody = restTemplate.exchange(backEndUrl, HttpMethod.PUT, createRequest(jsonBody.toString()), String.class).getBody();
+        String responseBody = restTemplate.exchange(backEndUrl, HttpMethod.PUT, createRequest(jsonBody.toString(), token), String.class).getBody();
         if (responseBody != null && responseBody.equals("true")) {
             return "Product edited successfully.";
         } else {
@@ -84,15 +84,17 @@ public class ProductService {
         return jsonNode;
     }
 
-    private HttpEntity<String> createRequest() {
+    private HttpEntity<String> createRequest(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(token);
         return new HttpEntity<>(headers);
     }
 
-    private HttpEntity<String> createRequest(String json) {
+    private HttpEntity<String> createRequest(String json, String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(token);
         return new HttpEntity<>(json, headers);
     }
 }

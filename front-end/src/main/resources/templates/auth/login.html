@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Login to Wholesale supplier</title>
+    <link rel="stylesheet" href="../authStyles.css">
+</head>
+<body>
+<div>
+    <h1>Login to Wholesale supplier</h1>
+</div>
+<form action="#" th:action="@{/auth/login}" method="post">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required><br><br>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <input type="submit" value="Login">
+</form>
+</body>
+</html>

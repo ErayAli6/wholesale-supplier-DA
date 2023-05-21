@@ -28,19 +28,19 @@ public class PurchaseService {
         this.objectMapper = objectMapper;
     }
 
-    public String getAllPurchases() {
-        return restTemplate.exchange(backEndUrl, HttpMethod.GET, createRequest(), String.class).getBody();
+    public String getAllPurchases(String token) {
+        return restTemplate.exchange(backEndUrl, HttpMethod.GET, createRequest(token), String.class).getBody();
     }
 
-    public String getPurchasesById(Long id) {
+    public String getPurchasesById(Long id, String token) {
         String url = backEndUrl + "/getById?id=" + id;
-        return restTemplate.exchange(url, HttpMethod.GET, createRequest(), String.class).getBody();
+        return restTemplate.exchange(url, HttpMethod.GET, createRequest(token), String.class).getBody();
     }
 
-    public String addPurchase(String bulstat, double totalPrice, List<String> barcodes, List<Integer> quantities, String orderType) {
+    public String addPurchase(String bulstat, double totalPrice, List<String> barcodes, List<Integer> quantities, String orderType, String token) {
         String url = backEndUrl + "?bulstat=" + bulstat + "&totalPrice=" + totalPrice + "&orderType=" + orderType;
         ArrayNode jsonBody = getJsonNode(barcodes, quantities);
-        String responseBody = restTemplate.exchange(url, HttpMethod.POST, createRequest(jsonBody.toString()), String.class).getBody();
+        String responseBody = restTemplate.exchange(url, HttpMethod.POST, createRequest(jsonBody.toString(), token), String.class).getBody();
         if (responseBody != null && responseBody.equals("true")) {
             return "Purchase added successfully.";
         } else {
@@ -61,15 +61,17 @@ public class PurchaseService {
         return jsonArray;
     }
 
-    private HttpEntity<String> createRequest() {
+    private HttpEntity<String> createRequest(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(token);
         return new HttpEntity<>(headers);
     }
 
-    private HttpEntity<String> createRequest(String json) {
+    private HttpEntity<String> createRequest(String json, String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(token);
         return new HttpEntity<>(json, headers);
     }
 }
