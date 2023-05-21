@@ -5,6 +5,7 @@ import bg.uni.plovdiv.model.BarcodeAndQuantity;
 import bg.uni.plovdiv.model.OrderType;
 import bg.uni.plovdiv.service.PurchaseService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMax;
@@ -28,21 +29,21 @@ public class PurchaseController {
     private final PurchaseService purchaseService;
 
     @GetMapping
-    @Operation(summary = "Get all purchases")
+    @Operation(summary = "Get all purchases", security = @SecurityRequirement(name = "bearerAuth"))
     public List<PurchaseDTO> getAllPurchases() {
         return purchaseService.getAllPurchases();
     }
 
     @GetMapping("/getById")
-    @Operation(summary = "Get a purchase by ID")
+    @Operation(summary = "Get a purchase by ID", security = @SecurityRequirement(name = "bearerAuth"))
     public Optional<PurchaseDTO> getPurchaseById(@NotBlank @RequestParam Long id) {
         return purchaseService.getPurchaseById(id);
     }
 
     @PostMapping
-    @Operation(summary = "Add a new purchase")
+    @Operation(summary = "Add a new purchase", security = @SecurityRequirement(name = "bearerAuth"))
     public boolean addPurchase(@NotBlank @RequestParam String bulstat, @Valid @RequestBody List<BarcodeAndQuantity> barcodeAndQuantityList, @RequestParam @DecimalMin(value = "0.00")
-    @DecimalMax(value = "9999999999.99") double totalPrice, @RequestParam @NotNull  OrderType orderType) {
+    @DecimalMax(value = "9999999999.99") double totalPrice, @RequestParam @NotNull OrderType orderType) {
         return purchaseService.addPurchase(bulstat, barcodeAndQuantityList, totalPrice, orderType);
     }
 }

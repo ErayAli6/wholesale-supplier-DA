@@ -3,6 +3,7 @@ package bg.uni.plovdiv.controller;
 import bg.uni.plovdiv.dto.ProductDTO;
 import bg.uni.plovdiv.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -25,31 +26,31 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    @Operation(summary = "Get all products")
+    @Operation(summary = "Get all products", security = @SecurityRequirement(name = "bearerAuth"))
     public List<ProductDTO> getAllProducts() {
         return productService.getAllProducts();
     }
 
     @GetMapping("/getByBarcode")
-    @Operation(summary = "Get a product by barcode")
+    @Operation(summary = "Get a product by barcode", security = @SecurityRequirement(name = "bearerAuth"))
     public Optional<ProductDTO> getProductByBarcode(@NotBlank @Length(max = 35) @RequestParam String barcode) {
         return productService.getProductDTOByBarcode(barcode);
     }
 
     @PostMapping
-    @Operation(summary = "Register a new product")
+    @Operation(summary = "Register a new product", security = @SecurityRequirement(name = "bearerAuth"))
     public boolean registerProduct(@NotNull @Valid @RequestBody ProductDTO productDTO) {
         return productService.registerProduct(productDTO);
     }
 
     @PutMapping
-    @Operation(summary = "Edit an existing product")
+    @Operation(summary = "Edit an existing product", security = @SecurityRequirement(name = "bearerAuth"))
     public boolean editProduct(@NotNull @Valid @RequestBody ProductDTO productDTO) {
         return productService.editProduct(productDTO);
     }
 
     @DeleteMapping("/remove")
-    @Operation(summary = "Remove a product by barcode")
+    @Operation(summary = "Remove a product by barcode", security = @SecurityRequirement(name = "bearerAuth"))
     public boolean removeProduct(@NotBlank @Length(max = 35) @RequestParam String barcode) {
         return productService.removeProduct(barcode);
     }
