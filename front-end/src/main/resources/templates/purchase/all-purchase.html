@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>All Purchases</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav>
+    <a href="/">
+        <img src="../images/wholasale.jpg" width="350" alt="Wholesale supplier logo">
+    </a>
+    <h1>All Purchases</h1>
+    <ul>
+        <li><a href="/product"><img src="../images/product_icon.png" width="15"> Products</a></li>
+        <li><a href="/company"><img src="../images/company.png" width="25">Companies</a></li>
+        <li><a href="/purchase"><img src="../images/purchases_logo.jpg" width="15">Purchases</a></li>
+        <li><a href="/auth/logout">Logout</a></li>
+    </ul>
+</nav>
+<div>
+    <nav>
+        <ul>
+            <li><a th:href="@{/purchase/get-all}">All Purchases</a></li>
+            <li><a th:href="@{/purchase/get-by-id}">Purchase By Id</a></li>
+            <li><a th:href="@{/purchase/add}">Add purchase</a></li>
+        </ul>
+    </nav>
+</div>
+<form th:action="@{/purchase/get-all}" method="post">
+    <button type="submit">Get All Purchases</button>
+</form>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>Characteristic</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Table rows will be dynamically generated here -->
+        </tbody>
+    </table>
+</div>
+<div class="pagination" style="margin-top: 20px; text-align: center;">
+    <button id="prevPageBtn" style="margin-right: 10px;">Previous</button>
+    <div id="paginationContainer" style="display: inline-block;"></div>
+    <button id="nextPageBtn" style="margin-left: 10px;">Next</button>
+</div>
+<script th:inline="javascript">
+    // Parse the JSON string into a JavaScript object
+    var allPurchases = /*[[${allPurchases}]]*/ '[]';
+    var purchasesData = JSON.parse(allPurchases);
+    var currentPage = 1;
+    var purchasesPerPage = 5;
+
+    // Function to generate table rows and columns dynamically
+    function generateTableRows(data) {
+        var tableBody = document.querySelector('tbody');
+        tableBody.innerHTML = '';
+
+        var startIndex = (currentPage - 1) * purchasesPerPage;
+        var endIndex = Math.min(startIndex + purchasesPerPage, data.length);
+
+        for (var i = startIndex; i < endIndex; i++) {
+            var purchase = data[i];
+            var row = document.createElement('tr');
+
+            for (var key in purchase) {
+                if (purchase.hasOwnProperty(key)) {
+                    var keyCell = document.createElement('td');
+                    var valueCell = document.createElement('td');
+
+                    if (key === 'company') {
+                        keyCell.textContent = 'Company';
+                        valueCell.textContent = getCompanyString(purchase[key]);
+                    } else if (key === 'orderProducts') {
+                        keyCell.textContent = 'Order Products';
+                        valueCell.textContent = getOrderProductsString(purchase[key]);
+                    } else {
+                        keyCell.textContent = key;
+                        valueCell.textContent = purchase[key];
+                    }
+
+                    row.appendChild(keyCell);
+                    row.appendChild(valueCell);
+                }
+            }
+
+            tableBody.appendChild(row);
+        }
+    }
+
+    // Function to format the company object as a string
+    function getCompanyString(company) {
+        var companyString = '';
+        companyString += 'Name: ' + company.name + ', ';
+        companyString += 'Bulstat: ' + company.bulstat + ', ';
+        companyString += 'VAT Number: ' + company.vatNumber + ', ';
+        companyString += 'Phone Number: ' + company.phoneNumber + ', ';
+        companyString += 'Email: ' + company.email + ', ';
+        companyString += 'Address: ' + getAddressString(company.address);
+
+        return companyString;
+    }
+
+    // Function to format the address object as a string
+    function getAddressString(address) {
+        var addressString = '';
+        addressString += 'Street: ' + address.street + ', ';
+        addressString += 'City: ' + address.city + ', ';
+        addressString += 'State: ' + address.state + ', ';
+        addressString += 'Country: ' + address.country + ', ';
+        addressString += 'Zip Code: ' + address.zipCode;
+
+        return addressString;
+    }
+
+    // Function to format the order products array as a string
+    function getOrderProductsString(orderProducts) {
+        var orderProductsString = '';
+
+        for (var i = 0; i < orderProducts.length; i++) {
+            var orderProduct = orderProducts[i];
+            orderProductsString += 'Product ' + (i + 1) + ': ' + getProductString(orderProduct);
+
+            if (i !== orderProducts.length - 1) {
+                orderProductsString += ', ';
+            }
+        }
+
+        return orderProductsString;
+    }
+
+    // Function to format an order product as a string
+    function getProductString(orderProduct) {
+        var productString = '';
+        productString += 'Barcode: ' + orderProduct.barcode + ', ';
+        productString += 'Brand: ' + orderProduct.brand + ', ';
+        productString += 'Model: ' + orderProduct.model + ', ';
+        productString += 'Category: ' + orderProduct.category + ', ';
+        productString += 'Price: ' + orderProduct.price;
+
+        return productString;
+    }
+
+    // Function to generate pagination links
+    function generatePagination(data) {
+        var paginationContainer = document.getElementById('paginationContainer');
+        paginationContainer.innerHTML = '';
+
+        var totalPages = Math.ceil(data.length / purchasesPerPage);
+
+        for (var i = 1; i <= totalPages; i++) {
+            var link = document.createElement('a');
+            link.href = '#';
+            link.textContent = i;
+            link.classList.add('page-link');
+
+            if (i === currentPage) {
+                link.classList.add('active');
+            }
+
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                currentPage = parseInt(this.textContent);
+                generateTableRows(purchasesData);
+                generatePagination(purchasesData);
+            });
+
+            paginationContainer.appendChild(link);
+        }
+    }
+
+    // Generate the table rows and pagination links on page load
+    generateTableRows(purchasesData);
+    generatePagination(purchasesData);
+
+    var prevPageBtn = document.getElementById('prevPageBtn');
+    var nextPageBtn = document.getElementById('nextPageBtn');
+
+    prevPageBtn.addEventListener('click', function() {
+        if (currentPage > 1) {
+            currentPage--;
+            generateTableRows(purchasesData);
+            generatePagination(purchasesData);
+        }
+    });
+
+    nextPageBtn.addEventListener('click', function() {
+        var totalPages = Math.ceil(purchasesData.length / purchasesPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            generateTableRows(purchasesData);
+            generatePagination(purchasesData);
+        }
+    });
+</script>
+</body>
+</html>

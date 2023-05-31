@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Product By Barcode</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #e9e9e9;
+        }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/">
+        <img src="../images/wholasale.jpg" width="350" alt="Wholesale supplier logo">
+    </a>
+    <h1>Product By Barcode</h1>
+    <ul>
+        <li><a href="/product"><img src="../images/product_icon.png" width="15"> Products</a></li>
+        <li><a href="/company"><img src="../images/company.png" width="25">Companies</a></li>
+        <li><a href="/purchase"><img src="../images/purchases_logo.jpg" width="15">Purchases</a></li>
+        <li><a href="/auth/logout">Logout</a></li>
+    </ul>
+</nav>
+<div>
+    <nav>
+        <ul>
+            <li><a th:href="@{/product/get-all}">All Products</a></li>
+            <li><a th:href="@{/product/get-by-barcode}">Product By Barcode</a></li>
+            <li><a th:href="@{/product/register}">Register product</a></li>
+            <li><a th:href="@{/product/edit}">Edit product</a></li>
+            <li><a th:href="@{/product/remove}">Remove Product</a></li>
+        </ul>
+    </nav>
+</div>
+<form method="post" th:action="@{/product/get-by-barcode}">
+    <label for="barcode">Barcode:</label>
+    <input type="text" id="barcode" name="barcode" required maxlength="35">
+    <button type="submit">Search</button>
+</form>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>Characteristic</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        <tbody id="productTableBody">
+        <!-- Table rows will be dynamically generated here -->
+        </tbody>
+    </table>
+</div>
+<script th:inline="javascript">
+    // Parse the JSON string into a JavaScript object
+    var productByBarcode = /*[[${productByBarcode}]]*/ '{}';
+    var productData = JSON.parse(productByBarcode);
+
+    // Function to generate table rows and columns dynamically
+    function generateTableRows(data) {
+        var tableBody = document.getElementById('productTableBody');
+
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+                var row = document.createElement('tr');
+                var keyCell = document.createElement('td');
+                var valueCell = document.createElement('td');
+
+                keyCell.textContent = key;
+                valueCell.textContent = data[key];
+
+                row.appendChild(keyCell);
+                row.appendChild(valueCell);
+
+                tableBody.appendChild(row);
+            }
+        }
+    }
+    // Generate the table rows on page load
+    generateTableRows(productData);
+</script>
+</body>
+</html>

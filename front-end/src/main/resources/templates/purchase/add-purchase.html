@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Register Product</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav>
+    <a href="/">
+        <img src="../images/wholasale.jpg" width="350" alt="Wholesale supplier logo">
+    </a>
+    <h1>Register Product</h1>
+    <ul>
+        <li><a href="/product"><img src="../images/product_icon.png" width="15"> Products</a></li>
+        <li><a href="/company"><img src="../images/company.png" width="25">Companies</a></li>
+        <li><a href="/purchase"><img src="../images/purchases_logo.jpg" width="15">Purchases</a></li>
+        <li><a href="/auth/logout">Logout</a></li>
+    </ul>
+</nav>
+<div>
+    <nav>
+        <ul>
+            <li><a th:href="@{/purchase/get-all}">All Purchases</a></li>
+            <li><a th:href="@{/purchase/get-by-id}">Purchase By Id</a></li>
+            <li><a th:href="@{/purchase/add}">Add purchase</a></li>
+        </ul>
+    </nav>
+</div>
+<form action="#" th:action="@{/purchase/add}" method="post">
+    <div>
+        <label for="bulstat">Bulstat:</label>
+        <input type="text" id="bulstat" name="bulstat" th:required="true" th:maxlength="35"/>
+    </div>
+    <div>
+        <label for="totalPrice">Total price:</label>
+        <input type="number" id="totalPrice" name="totalPrice" th:min="0.00" th:max="9999999999.99" step="0.01"/>
+    </div>
+    <div id="barcode-quantity-container">
+        <div class="barcode-quantity">
+            <label for="barcode">Barcode:</label>
+            <input type="text" id="barcode" name="barcode" required>
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" min="1" required>
+        </div>
+    </div>
+    <button type="button" onclick="addBarcodeQuantity()">Add another barcode</button>
+    <div>
+        <label for="orderType">Order Type:</label>
+        <select id="orderType" name="orderType" required>
+            <option value="DELIVERY">DELIVERY</option>
+            <option value="SELLING">SELLING</option>
+        </select>
+    </div>
+    <div>
+        <input type="submit" value="Add"/>
+    </div>
+</form>
+
+<script>
+        function addBarcodeQuantity() {
+            const container = document.getElementById('barcode-quantity-container');
+            const newBarcodeQuantity = document.createElement('div');
+            newBarcodeQuantity.className = 'barcode-quantity';
+            newBarcodeQuantity.innerHTML = `
+                <label for="barcode">Barcode:</label>
+                <input type="text" id="barcode" name="barcode" required>
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" min="1" required>
+            `;
+            container.appendChild(newBarcodeQuantity);
+        }
+</script>
+
+<p th:text="${addPurchase}"></p>
+</body>
+</html>

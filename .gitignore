@@ -7,9 +7,11 @@
 .settings
 /shelf/
 /workspace.xml
+.mvn/wrapper
 
 .DS_Store
 .idea
+.mvn
 *.class
 *.iml
 *.conf

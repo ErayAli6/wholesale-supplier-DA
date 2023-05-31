@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>All Users</title>
+    <link rel="stylesheet" href="../authStyles.css">
+</head>
+<body>
+<h2>All Users</h2>
+<nav>
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/auth/admin-panel">Panel</a></li>
+        <li><a href="/auth/register">Register</a></li>
+        <li><a href="/auth/remove">Remove</a></li>
+        <li><a href="/auth/getUsers">Get Users</a></li>
+        <li><a href="/auth/logout">Logout</a></li>
+    </ul>
+</nav>
+<form th:action="@{/auth/getUsers}" method="post">
+    <button type="submit">Get All Users</button>
+</form>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>Username</th>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>User role</th>
+        </tr>
+        </thead>
+        <tbody id="userTableBody">
+        <!-- Table rows will be dynamically generated here -->
+        </tbody>
+    </table>
+</div>
+<div class="pagination" style="margin-top: 20px; text-align: center;">
+    <button id="prevPageBtn" style="margin-right: 10px;">Previous</button>
+    <div id="paginationContainer" style="display: inline-block;"></div>
+    <button id="nextPageBtn" style="margin-left: 10px;">Next</button>
+</div>
+<script th:inline="javascript">
+    // Parse the JSON string into a JavaScript object
+    var allUsers = /*[[${allUsers}]]*/ '[]';
+    var userData = JSON.parse(allUsers);
+    var currentPage = 1;
+    var usersPerPage = 5;
+
+    // Function to generate table rows and columns dynamically
+    function generateTableRows(data) {
+        var tableBody = document.getElementById('userTableBody');
+        tableBody.innerHTML = '';
+
+        var startIndex = (currentPage - 1) * usersPerPage;
+        var endIndex = Math.min(startIndex + usersPerPage, data.length);
+
+        for (var i = startIndex; i < endIndex; i++) {
+            var user = data[i];
+            var row = document.createElement('tr');
+
+            var usernameCell = document.createElement('td');
+            usernameCell.textContent = user.username;
+            row.appendChild(usernameCell);
+
+            var firstNameCell = document.createElement('td');
+            firstNameCell.textContent = user.firstName;
+            row.appendChild(firstNameCell);
+
+            var lastNameCell = document.createElement('td');
+            lastNameCell.textContent = user.lastName;
+            row.appendChild(lastNameCell);
+
+            var userRoleCell = document.createElement('td');
+            userRoleCell.textContent = user.userRole;
+            row.appendChild(userRoleCell);
+
+            tableBody.appendChild(row);
+        }
+    }
+
+    // Function to generate pagination links
+    function generatePagination(data) {
+    var paginationContainer = document.getElementById('paginationContainer');
+        paginationContainer.innerHTML = '';
+
+        var totalPages = Math.ceil(data.length / usersPerPage);
+
+        for (var i = 1; i <= totalPages; i++) {
+            var link = document.createElement('a');
+            link.href = '#';
+            link.textContent = i;
+            link.classList.add('page-link');
+
+            if (i === currentPage) {
+                link.classList.add('active');
+            }
+
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                currentPage = parseInt(this.textContent);
+                generateTableRows(userData);
+                generatePagination(userData);
+            });
+
+            paginationContainer.appendChild(link);
+        }
+    }
+
+    // Generate the table rows and pagination links on page load
+    generateTableRows(userData);
+    generatePagination(userData);
+
+     var prevPageBtn = document.getElementById('prevPageBtn');
+    var nextPageBtn = document.getElementById('nextPageBtn');
+
+    prevPageBtn.addEventListener('click', function() {
+        if (currentPage > 1) {
+            currentPage--;
+            generateTableRows(userData);
+            generatePagination(userData);
+        }
+    });
+
+    nextPageBtn.addEventListener('click', function() {
+        var totalPages = Math.ceil(userData.length / usersPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            generateTableRows(userData);
+            generatePagination(userData);
+        }
+    });
+</script>
+</body>
+</html>

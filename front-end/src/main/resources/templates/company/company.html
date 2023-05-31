@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Companies</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav>
+    <a href="/">
+        <img src="../images/wholasale.jpg" width="350" alt="Wholesale supplier logo">
+    </a>
+    <h1>Products</h1>
+    <ul>
+        <li><a href="/product"><img src="../images/product_icon.png" width="15"> Products</a></li>
+        <li><a href="/company"><img src="../images/company.png" width="25">Companies</a></li>
+        <li><a href="/purchase"><img src="../images/purchases_logo.jpg" width="15">Purchases</a></li>
+        <li><a href="/auth/logout">Logout</a></li>
+    </ul>
+</nav>
+<div>
+    <nav>
+        <ul>
+            <li><a th:href="@{/company/get-all}">All Companies</a></li>
+            <li><a th:href="@{/company/get-by-bulstat}">Company By Bulstat</a></li>
+            <li><a th:href="@{/company/add}">Add company</a></li>
+            <li><a th:href="@{/company/edit}">Edit company</a></li>
+            <li><a th:href="@{/company/remove}">Remove company</a></li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>All Companies</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav>
+    <a href="/">
+        <img src="../images/wholasale.jpg" width="350" alt="Wholesale supplier logo">
+    </a>
+    <h1>companys</h1>
+    <ul>
+        <li><a href="/company"><img src="../images/company_icon.png" width="15"> companys</a></li>
+        <li><a href="/company"><img src="../images/company.png" width="25">Companies</a></li>
+        <li><a href="/purchase"><img src="../images/purchases_logo.jpg" width="15">Purchases</a></li>
+        <li><a href="/auth/logout">Logout</a></li>
+    </ul>
+</nav>
+<div>
+    <nav>
+        <ul>
+            <li><a th:href="@{/company/get-all}">All Companies</a></li>
+            <li><a th:href="@{/company/get-by-bulstat}">Company By Bulstat</a></li>
+            <li><a th:href="@{/company/add}">Add company</a></li>
+            <li><a th:href="@{/company/edit}">Edit company</a></li>
+            <li><a th:href="@{/company/remove}">Remove company</a></li>
+        </ul>
+    </nav>
+</div>
+<form th:action="@{/company/get-all}" method="post">
+    <button type="submit">Get All Companies</button>
+</form>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>Bulstat</th>
+            <th>Name</th>
+            <th>Country</th>
+            <th>State</th>
+            <th>City</th>
+            <th>Street</th>
+            <th>Number</th>
+            <th>ZIP Code</th>
+            <th>VAT Number</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody id="companyTableBody">
+        <!-- Table rows will be dynamically generated here -->
+        </tbody>
+    </table>
+</div>
+<div class="pagination" style="margin-top: 20px; text-align: center;">
+    <button id="prevPageBtn" style="margin-right: 10px;">Previous</button>
+    <div id="paginationContainer" style="display: inline-block;"></div>
+    <button id="nextPageBtn" style="margin-left: 10px;">Next</button>
+</div>
+<script th:inline="javascript">
+    // Parse the JSON string into a JavaScript object
+    var allCompanies = /*[[${allCompanies}]]*/ '[]';
+    var companyData = JSON.parse(allCompanies);
+    var currentPage = 1;
+    var companiesPerPage = 5;
+
+    // Function to generate table rows and columns dynamically
+    function generateTableRows(data) {
+        var tableBody = document.getElementById('companyTableBody');
+        tableBody.innerHTML = '';
+
+        var startIndex = (currentPage - 1) * companiesPerPage;
+        var endIndex = Math.min(startIndex + companiesPerPage, data.length);
+
+        for (var i = startIndex; i < endIndex; i++) {
+            var company = data[i];
+            var row = document.createElement('tr');
+
+            var bulstatCell = document.createElement('td');
+            bulstatCell.textContent = company.bulstat;
+            row.appendChild(bulstatCell);
+
+            var nameCell = document.createElement('td');
+            nameCell.textContent = company.name;
+            row.appendChild(nameCell);
+
+            var countryCell = document.createElement('td');
+            countryCell.textContent = company.address.country;
+            row.appendChild(countryCell);
+
+            var stateCell = document.createElement('td');
+            stateCell.textContent = company.address.state;
+            row.appendChild(stateCell);
+
+            var cityCell = document.createElement('td');
+            cityCell.textContent = company.address.city;
+            row.appendChild(cityCell);
+
+            var streetCell = document.createElement('td');
+            streetCell.textContent = company.address.street;
+            row.appendChild(streetCell);
+
+            var numberCell = document.createElement('td');
+            numberCell.textContent = company.address.number;
+            row.appendChild(numberCell);
+
+            var zipCodeCell = document.createElement('td');
+            zipCodeCell.textContent = company.address.zipCode;
+            row.appendChild(zipCodeCell);
+
+            var vatNumberCell = document.createElement('td');
+            vatNumberCell.textContent = company.vatNumber;
+            row.appendChild(vatNumberCell);
+
+            var phoneNumberCell = document.createElement('td');
+            phoneNumberCell.textContent = company.phoneNumber;
+            row.appendChild(phoneNumberCell);
+
+            var emailCell = document.createElement('td');
+            emailCell.textContent = company.email;
+            row.appendChild(emailCell);
+
+            tableBody.appendChild(row);
+        }
+    }
+
+    // Function to generate pagination links
+    function generatePagination(data) {
+    var paginationContainer = document.getElementById('paginationContainer');
+        paginationContainer.innerHTML = '';
+
+        var totalPages = Math.ceil(data.length / companiesPerPage);
+
+        for (var i = 1; i <= totalPages; i++) {
+            var link = document.createElement('a');
+            link.href = '#';
+            link.textContent = i;
+            link.classList.add('page-link');
+
+            if (i === currentPage) {
+                link.classList.add('active');
+            }
+
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                currentPage = parseInt(this.textContent);
+                generateTableRows(companyData);
+                generatePagination(companyData);
+            });
+
+            paginationContainer.appendChild(link);
+        }
+    }
+
+    // Generate the table rows and pagination links on page load
+    generateTableRows(companyData);
+    generatePagination(companyData);
+
+     var prevPageBtn = document.getElementById('prevPageBtn');
+    var nextPageBtn = document.getElementById('nextPageBtn');
+
+    prevPageBtn.addEventListener('click', function() {
+        if (currentPage > 1) {
+            currentPage--;
+            generateTableRows(companyData);
+            generatePagination(companyData);
+        }
+    });
+
+    nextPageBtn.addEventListener('click', function() {
+        var totalPages = Math.ceil(companyData.length / companiesPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            generateTableRows(companyData);
+            generatePagination(companyData);
+        }
+    });
+</script>
+</body>
+</html>

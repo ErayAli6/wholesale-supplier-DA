@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Company by Bulstat</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #e9e9e9;
+        }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/">
+        <img src="../images/wholasale.jpg" width="350" alt="Wholesale supplier logo">
+    </a>
+    <h1>Products</h1>
+    <ul>
+        <li><a href="/product"><img src="../images/product_icon.png" width="15"> Products</a></li>
+        <li><a href="/company"><img src="../images/company.png" width="25">Companies</a></li>
+        <li><a href="/purchase"><img src="../images/purchases_logo.jpg" width="15">Purchases</a></li>
+        <li><a href="/auth/logout">Logout</a></li>
+    </ul>
+</nav>
+<div>
+    <nav>
+        <ul>
+            <li><a th:href="@{/company/get-all}">All Companies</a></li>
+            <li><a th:href="@{/company/get-by-bulstat}">Company By Bulstat</a></li>
+            <li><a th:href="@{/company/add}">Add company</a></li>
+            <li><a th:href="@{/company/edit}">Edit company</a></li>
+            <li><a th:href="@{/company/remove}">Remove company</a></li>
+        </ul>
+    </nav>
+</div>
+<form method="post" th:action="@{/company/get-by-bulstat}">
+    <label for="bulstat">Bulstat:</label>
+    <input type="text" id="bulstat" name="bulstat" required maxlength="35">
+    <button type="submit">Search</button>
+</form>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>Characteristic</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        <tbody id="companyTableBody">
+        <!-- Table rows will be dynamically generated here -->
+        </tbody>
+    </table>
+</div>
+<script th:inline="javascript">
+    // Parse the JSON string into a JavaScript object
+    var companyByBulstat = /*[[${companyByBulstat}]]*/ '{}';
+    var companyData = JSON.parse(companyByBulstat);
+
+    // Function to generate table rows and columns dynamically
+    function generateTableRows(data) {
+        var tableBody = document.getElementById('companyTableBody');
+
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+                var row = document.createElement('tr');
+                var keyCell = document.createElement('td');
+                var valueCell = document.createElement('td');
+
+                keyCell.textContent = key;
+
+                // Check if the value is an object (address)
+                if (typeof data[key] === 'object' && data[key] !== null) {
+                    // Access the address properties and display them individually
+                    var address = data[key];
+                    valueCell.textContent = address.country + ', ' +
+                        address.state + ', ' +
+                        address.city + ', ' +
+                        address.street + ', ' +
+                        address.number + ', ' +
+                        address.zipCode;
+                } else {
+                    valueCell.textContent = data[key];
+                }
+
+                row.appendChild(keyCell);
+                row.appendChild(valueCell);
+
+                tableBody.appendChild(row);
+            }
+        }
+    }
+
+    // Generate the table rows on page load
+    generateTableRows(companyData);
+</script>
+</body>
+</html>

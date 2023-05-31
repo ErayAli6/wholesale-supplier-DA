@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>All Products</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<nav>
+    <a href="/">
+        <img src="../images/wholasale.jpg" width="350" alt="Wholesale supplier logo">
+    </a>
+    <h1>All Products</h1>
+    <ul>
+        <li><a href="/product"><img src="../images/product_icon.png" width="15"> Products</a></li>
+        <li><a href="/company"><img src="../images/company.png" width="25">Companies</a></li>
+        <li><a href="/purchase"><img src="../images/purchases_logo.jpg" width="15">Purchases</a></li>
+        <li><a href="/auth/logout">Logout</a></li>
+    </ul>
+</nav>
+<div>
+    <nav>
+        <ul>
+            <li><a th:href="@{/product/get-all}">All Products</a></li>
+            <li><a th:href="@{/product/get-by-barcode}">Product By Barcode</a></li>
+            <li><a th:href="@{/product/register}">Register product</a></li>
+            <li><a th:href="@{/product/edit}">Edit product</a></li>
+            <li><a th:href="@{/product/remove}">Remove Product</a></li>
+        </ul>
+    </nav>
+</div>
+<form th:action="@{/product/get-all}" method="post">
+    <button type="submit">Get All Products</button>
+</form>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>Barcode</th>
+            <th>Brand</th>
+            <th>Model</th>
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Manufacture Date</th>
+            <th>Photo</th>
+        </tr>
+        </thead>
+        <tbody id="productTableBody">
+        <!-- Table rows will be dynamically generated here -->
+        </tbody>
+    </table>
+</div>
+<div class="pagination" style="margin-top: 20px; text-align: center;">
+    <button id="prevPageBtn" style="margin-right: 10px;">Previous</button>
+    <div id="paginationContainer" style="display: inline-block;"></div>
+    <button id="nextPageBtn" style="margin-left: 10px;">Next</button>
+</div>
+<script th:inline="javascript">
+    // Parse the JSON string into a JavaScript object
+    var allProducts = /*[[${allProducts}]]*/ '[]';
+    var productData = JSON.parse(allProducts);
+    var currentPage = 1;
+    var productsPerPage = 5;
+
+    // Function to generate table rows and columns dynamically
+    function generateTableRows(data) {
+        var tableBody = document.getElementById('productTableBody');
+        tableBody.innerHTML = '';
+
+        var startIndex = (currentPage - 1) * productsPerPage;
+        var endIndex = Math.min(startIndex + productsPerPage, data.length);
+
+        for (var i = startIndex; i < endIndex; i++) {
+            var product = data[i];
+            var row = document.createElement('tr');
+
+            var barcodeCell = document.createElement('td');
+            barcodeCell.textContent = product.barcode;
+            row.appendChild(barcodeCell);
+
+            var brandCell = document.createElement('td');
+            brandCell.textContent = product.brand;
+            row.appendChild(brandCell);
+
+            var modelCell = document.createElement('td');
+            modelCell.textContent = product.model;
+            row.appendChild(modelCell);
+
+            var categoryCell = document.createElement('td');
+            categoryCell.textContent = product.category;
+            row.appendChild(categoryCell);
+
+            var quantityCell = document.createElement('td');
+            quantityCell.textContent = product.quantity;
+            row.appendChild(quantityCell);
+
+            var priceCell = document.createElement('td');
+            priceCell.textContent = product.price;
+            row.appendChild(priceCell);
+
+            var manufactureDateCell = document.createElement('td');
+            manufactureDateCell.textContent = product.manufactureDate;
+            row.appendChild(manufactureDateCell);
+
+            var photoCell = document.createElement('td');
+            var photoImg = document.createElement('img');
+            photoImg.src = product.photo;
+            photoCell.appendChild(photoImg);
+            row.appendChild(photoCell);
+
+            tableBody.appendChild(row);
+        }
+    }
+
+    // Function to generate pagination links
+    function generatePagination(data) {
+    var paginationContainer = document.getElementById('paginationContainer');
+        paginationContainer.innerHTML = '';
+
+        var totalPages = Math.ceil(data.length / productsPerPage);
+
+        for (var i = 1; i <= totalPages; i++) {
+            var link = document.createElement('a');
+            link.href = '#';
+            link.textContent = i;
+            link.classList.add('page-link');
+
+            if (i === currentPage) {
+                link.classList.add('active');
+            }
+
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                currentPage = parseInt(this.textContent);
+                generateTableRows(productData);
+                generatePagination(productData);
+            });
+
+            paginationContainer.appendChild(link);
+        }
+    }
+
+    // Generate the table rows and pagination links on page load
+    generateTableRows(productData);
+    generatePagination(productData);
+
+     var prevPageBtn = document.getElementById('prevPageBtn');
+    var nextPageBtn = document.getElementById('nextPageBtn');
+
+    prevPageBtn.addEventListener('click', function() {
+        if (currentPage > 1) {
+            currentPage--;
+            generateTableRows(productData);
+            generatePagination(productData);
+        }
+    });
+
+    nextPageBtn.addEventListener('click', function() {
+        var totalPages = Math.ceil(productData.length / productsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            generateTableRows(productData);
+            generatePagination(productData);
+        }
+    });
+</script>
+</body>
+</html>
